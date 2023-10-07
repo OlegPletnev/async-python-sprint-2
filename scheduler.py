@@ -20,20 +20,16 @@ class Task:
 
 
 class Scheduler:
-    def __init__(self, pool_size: int = 10, tasks: list[Task] = None):
+    def __init__(self, pool_size: int = 10, tasks: list[Task] | None = None):
         self.tasks = tasks or []
         self.pool_size = pool_size
         self.sleeping_tasks = deque()
 
-    def add_tasks(self, jobs: list[Job]):
-        pass
-
     def waiting_tasks(self):
-        list_tasks = list(filter(
+        return list(filter(
             lambda x: x.job.status not in [TaskStatus.COMPLETED,
                                            TaskStatus.FAILED],
             self.tasks))
-        return list_tasks
 
     def stop(self):
         self.save_statement()
@@ -50,6 +46,7 @@ class Scheduler:
                 main_task.job.status = TaskStatus.WAITING
                 break
         if len(self.waiting_tasks()) < self.pool_size:
+            # Объединить не получится - съедет логика в стр. 67
             if job.dependencies:
                 if len(job.dependencies) + len(
                         self.waiting_tasks()) < self.pool_size:
@@ -69,7 +66,6 @@ class Scheduler:
                                 break
             self.tasks.append(main_task)
             logger.info('Task <%s> added', main_task.name)
-            # job.status = TaskStatus.WAITING
         else:
             self.sleeping_tasks.append(job)
 

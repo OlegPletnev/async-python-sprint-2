@@ -1,6 +1,7 @@
 import inspect
 import logging
 from pathlib import Path
+from typing import Generator
 
 import requests
 import time
@@ -40,7 +41,7 @@ def task_5():
     logger.info('The following function is executed "%s"', func_name)
 
 
-def create_folder(path: str) -> None:
+def create_folder(path: str) -> Generator:
     try:
         Path(path).mkdir()
         logger.info('Create a folder <%s>. Job DONE', path)
@@ -55,7 +56,7 @@ def create_folder(path: str) -> None:
         yield
 
 
-def remove_folder(path: str) -> None:
+def remove_folder(path: str) -> Generator:
     try:
         Path(path).rmdir()
         logger.info('Delete the %s folder. Job COMPLETE', path)
@@ -72,13 +73,13 @@ def remove_folder(path: str) -> None:
         raise Exception(e)
 
 
-def rename_folder_or_file(old: str, new: str) -> None:
+def rename_folder_or_file(old: str, new: str) -> Generator:
     Path(old).rename(Path(new))
     logger.info('Renaming Job DONE')
     yield
 
 
-def create_file(path_to_file: str) -> None:
+def create_file(path_to_file: str) -> Generator:
     with open(path_to_file, 'w') as file:
         pass
     logger.info('A blank file was created at: <%s>. Job DONE',
@@ -86,13 +87,13 @@ def create_file(path_to_file: str) -> None:
     yield
 
 
-def remove_file(path_to_file: str) -> None:
+def remove_file(path_to_file: str) -> Generator:
     Path(path_to_file).unlink()
     logger.info('The <%s> file has been deleted. Job COMPLETED', path_to_file)
     yield
 
 
-def read_file(path_to_file: str) -> None:
+def read_file(path_to_file: str) -> Generator:
     with open(path_to_file, "r") as file:
         content = file.read()
     logger.info('The contents of the %s file have been read. Job COMPLETE',
@@ -100,7 +101,7 @@ def read_file(path_to_file: str) -> None:
     yield
 
 
-def write_file(path_to_file: str, content: str) -> None:
+def write_file(path_to_file: str, content: str) -> Generator:
     with open(path_to_file, 'w') as file:
         file.write(content)
     logger.info('The %s file is saved with the content installed',
@@ -108,7 +109,7 @@ def write_file(path_to_file: str, content: str) -> None:
     yield
 
 
-def adscript_file(path_to_file: str, additional_content: str) -> None:
+def adscript_file(path_to_file: str, additional_content: str) -> Generator:
     with open(path_to_file, 'a') as file:
         file.write(additional_content)
     logger.info('Additional content added to the file<%s>',
@@ -116,7 +117,7 @@ def adscript_file(path_to_file: str, additional_content: str) -> None:
     yield
 
 
-def get_data_from_url(url: str) -> None:
+def get_data_from_url(url: str) -> Generator:
     resp = requests.get(url)
     if resp.status_code == 200:
         data = resp.text
